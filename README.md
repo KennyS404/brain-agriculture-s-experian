@@ -1,99 +1,147 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Brain Agriculture - Backend (NestJS + TypeScript)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este projeto é um **Backend** para gerenciamento de produtores rurais, fazendas e culturas, com foco em boas práticas de código, testes e documentação. A solução foi desenvolvida usando **NestJS**, **TypeScript**, **Docker**, **PostgreSQL** e **Swagger**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 1. Descrição Geral
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+O objetivo é criar e gerenciar:
 
-## Project setup
+- **Produtores Rurais** (CPF ou CNPJ, nome do produtor).
+- **Propriedades Rurais (Fazendas)** (nome, cidade, estado, áreas em hectares).
+- **Culturas** (por safra, ex.: Soja na Safra 2021).
 
-```bash
-$ npm install
-```
+#### Principais Regras de Negócio
 
-## Compile and run the project
+1. **Validação de CPF ou CNPJ**: Não pode haver duplicidade; deve ter 11 dígitos (CPF) ou 14 dígitos (CNPJ).
+2. **Áreas**: A soma de área agricultável + área de vegetação **não** pode exceder a área total da fazenda.
+3. **Associações**:
+   - Um produtor pode ter 0, 1 ou mais fazendas.
+   - Uma fazenda pode ter 0, 1 ou mais culturas (por safra).
+4. **Dashboard**: Agrega dados para visualização estatística, como:
+   - Total de fazendas cadastradas (quantidade).
+   - Total de hectares registrados (área total).
+   - Distribuição por estado, por cultura, e por uso do solo (área agricultável vs. vegetação).
 
-```bash
-# development
-$ npm run start
+---
 
-# watch mode
-$ npm run start:dev
+## 2. Principais Tecnologias e Bibliotecas
 
-# production mode
-$ npm run start:prod
-```
+- **NestJS** (framework para Node.js)
+- **TypeScript** (tipagem estática)
+- **TypeORM** (ORM para interação com banco de dados)
+- **PostgreSQL** (SGBD)
+- **Docker** e **Docker Compose** (containerização)
+- **Swagger** (documentação de API)
+- **Jest** (framework de testes)
+- **Class-Validator**, **Class-Transformer** (validação de DTOs)
+- **Fly.io**, (Para realizar o deploy)
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+## 3. Variáveis de Ambiente
 
-# e2e tests
-$ npm run test:e2e
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis (exemplo):
 
-# test coverage
-$ npm run test:cov
-```
+POSTGRES_HOST=database
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=brain_agriculture_db
+APP_PORT=3000
+NODE_ENV=development
 
-## Deployment
+> **Atenção**: Em produção, utilize valores seguros e não versione o arquivo `.env` em repositórios públicos.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+---
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 4. Como Executar com Docker
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+### 4.1 Pré-requisitos
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- **Docker** instalado
+- **Docker Compose** instalado
 
-## Resources
+### 4.2 Rodar a aplicação
 
-Check out a few resources that may come in handy when working with NestJS:
+Na raiz do projeto (onde está o `docker-compose.yml`), execute:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+docker-compose up --build
 
-## Support
+Isso irá:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+1. **Subir um container** com PostgreSQL (imagem `postgres:15-alpine`), na porta **5432**.
+2. **Subir o container** da aplicação NestJS (exposto na porta configurada em `APP_PORT`, por padrão 3000).
 
-## Stay in touch
+Quando ambos estiverem prontos, você poderá acessar a aplicação em:
+http://localhost:3000
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 4.3 Documentação Swagger
 
-## License
+Abra em seu navegador:
+http://localhost:3000/api
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Lá, você encontrará a documentação **Swagger** com todos os endpoints, descrições e modelos de request/response.
+
+---
+
+## 5. Executando Testes Unitários
+
+A aplicação foi configurada com **Jest**. Existem testes unitários que validam as regras de negócio de **Produtores, Fazendas e Culturas**.
+
+Para rodar os testes localmente (fora do Docker), instale as dependências e execute:
+
+npm install
+npm run test
+
+Opcionalmente, você pode configurar seu Docker para rodar testes, mas o mais comum é executar localmente em seu ambiente de desenvolvimento.
+
+---
+
+## 6. Acessando o Projeto
+
+- **Aplicação**: [http://localhost:3000](http://localhost:3000)
+- **Swagger**: [http://localhost:3000/api](http://localhost:3000/api)
+
+**Rotas Principais** (exemplos):
+- `POST /producers` – cria produtor
+- `GET /producers` – lista produtores
+- `PATCH /producers/:id` – atualiza produtor
+- `DELETE /producers/:id` – exclui produtor
+- `POST /farmlands` – cria fazenda
+- `GET /farmlands` – lista fazendas
+- `PATCH /farmlands/:id` – atualiza fazenda
+- `DELETE /farmlands/:id` – exclui fazenda
+- `POST /crops` – cria cultura
+- `GET /crops` – lista culturas
+- `DELETE /crops/:id` – exclui cultura
+- `GET /dashboard` – retorna dados agregados para o dashboard
+
+---
+
+## 7. Resumo das Funcionalidades (Possui testes para garantir todas essas funcionalidades)
+
+- **Produtores**:
+  - Valida se o `cpfOrCnpj` já existe (lança erro se duplicado).
+  - Pode criar, listar, buscar por ID, atualizar e excluir.
+
+- **Fazendas**:
+  - Pertence a um produtor.
+  - Valida se `arableAreaInHectares + vegetationAreaInHectares <= totalAreaInHectares`.
+  - Pode criar, listar, buscar por ID, atualizar e excluir.
+
+- **Culturas**:
+  - Pertencem a uma fazenda (Farm).
+  - Pode criar, listar, buscar por ID, atualizar e excluir.
+
+- **Dashboard**:
+  - Agrega dados: total de fazendas, hectares, estatísticas por estado, por cultura e uso do solo.
+
+---
+
+## 8. Dicas Finais
+
+- Para simular dados rapidamente, você pode criar um serviço de **seeds** (ex.: `MockSeedsService`) para inserir registros fake no banco, facilitando testes manuais.
+- A aplicação possui **relacionamentos** configurados com `cascade: true` e `onDelete: 'CASCADE'`. Ou seja, ao excluir um **Produtor**, suas **Fazendas** (e respectivas **Culturas**) também são excluídas.
+
